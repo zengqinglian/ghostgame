@@ -1,0 +1,198 @@
+<html>
+<head>
+<title>Ghost Game</title>
+<SCRIPT LANGUAGE="JavaScript">
+
+function getXMLObject()  //XML OBJECT
+{
+   var xmlHttp = false;
+   try {
+     xmlHttp = new ActiveXObject("Msxml2.XMLHTTP")  // For Old Microsoft Browsers
+   }
+   catch (e) {
+     try {
+       xmlHttp = new ActiveXObject("Microsoft.XMLHTTP")  // For Microsoft IE 6.0+
+     }
+     catch (e2) {
+       xmlHttp = false   // No Browser accepts the XMLHTTP Object then false
+     }
+   }
+   if (!xmlHttp && typeof XMLHttpRequest != 'undefined') {
+     xmlHttp = new XMLHttpRequest();        //For Mozilla, Opera Browsers
+   }
+   return xmlHttp; 
+}
+ 
+var xmlhttp = new getXMLObject();
+ 
+function ajaxFunction(currentWord) {
+   //Used to prevent caching during ajax call
+  if(xmlhttp) {
+    xmlhttp.open("GET","http://localhost:8080/ghostgame/ghost?word=" + currentWord,false); 
+    xmlhttp.onreadystatechange  = handleServerResponse;
+    xmlhttp.setRequestHeader('Content-Type', 'application/json');
+    xmlhttp.send(null);
+  }
+}
+ 
+function handleServerResponse() {
+   if (xmlhttp.readyState == 4) {
+     if(xmlhttp.status == 200) {
+       var json = eval('(' + xmlhttp.responseText +')');
+       document.getElementById('word').innerHTML = json.retword;
+       if(json.gameover){
+       		document.getElementById('userStartBtn').disabled  = true;
+       }
+     }
+     else {
+        alert("Error during AJAX call. Error status " + xmlhttp.status);
+     }
+   }
+}
+
+function userStart() {
+    var TestVar = document.getElementById('selectedLetter').value;
+    document.getElementById('word').innerHTML += TestVar;
+    document.getElementById('cpuStartBtn').disabled  = true;
+    //call servlet get feedback call ajax
+    ajaxFunction(document.getElementById('word').innerHTML)
+}
+
+function cpuStart() {
+    var randomnumber=Math.floor(Math.random()*26)+1;
+    var selectedChar;
+    switch(randomnumber)
+	{
+	case 1:
+	  selectedChar="a"
+	  break;
+	case 2:
+	  selectedChar="b"
+	  break;
+	case 3:
+	  selectedChar="c"
+	  break;
+	case 4:
+	  selectedChar="d"
+	  break;
+	case 5:
+	  selectedChar="2"
+	  break;
+	case 6:
+	  selectedChar="f"
+	  break;
+	  case 7:
+	  selectedChar="g"
+	  break;
+	case 8:
+	  selectedChar="h"
+	  break;
+	case 9:
+	  selectedChar="i"
+	  break;
+	case 10:
+	  selectedChar="j"
+	  break;
+	case 11:
+	  selectedChar="k"
+	  break;
+	case 12:
+	  selectedChar="l"
+	  break;
+	case 13:
+	  selectedChar="m"
+	  break;
+	case 14:
+	  selectedChar="n"
+	  break;
+	case 15:
+	  selectedChar="o"
+	  break;
+	case 16:
+	  selectedChar="p"
+	  break;
+	case 17:
+	  selectedChar="q"
+	  break;
+	case 18:
+	  selectedChar="r"
+	  break;
+	  case 19:
+	  selectedChar="s"
+	  break;
+	case 20:
+	  selectedChar="t"
+	  break;
+	case 21:
+	  selectedChar="u"
+	  break;
+	case 22:
+	  selectedChar="v"
+	  break;
+	case 23:
+	  selectedChar="w"
+	  break;  
+	case 24:
+	  selectedChar="x"
+	  break;
+	case 25:
+	  selectedChar="y"
+	  break;
+	case 26:
+	  selectedChar="z"
+	  break;
+	}
+    document.getElementById('word').innerHTML = selectedChar;
+    document.getElementById('cpuStartBtn').disabled  = true;   
+}
+
+function restartGame() {
+    document.getElementById('userStartBtn').disabled  = false;
+    document.getElementById('cpuStartBtn').disabled  = false;
+    document.getElementById('word').innerHTML = "";
+}
+
+</SCRIPT>
+</head>
+<body bgcolor=white>
+
+<form>
+<b>Word:<label for="word" id="word"></label><b>
+<br />
+<select id="selectedLetter">
+  <option value="a">a</option>
+  <option value="b">b</option>
+  <option value="c">c</option>
+  <option value="d">d</option>
+  <option value="e">e</option>
+  <option value="f">f</option>
+  <option value="g">g</option>
+  <option value="h">h</option>
+  <option value="i">i</option>
+  <option value="j">j</option>
+  <option value="k">k</option>
+  <option value="l">l</option>
+  <option value="m">m</option>
+  <option value="n">n</option>
+  <option value="o">o</option>
+  <option value="p">p</option>
+  <option value="q">q</option>
+  <option value="r">r</option>
+  <option value="s">s</option>
+  <option value="t">t</option>
+  <option value="u">u</option>
+  <option value="v">v</option>
+  <option value="w">w</option>
+  <option value="x">x</option>
+  <option value="y">y</option>
+  <option value="z">z</option>
+</select>  
+<br />
+<button id="userStartBtn" type="button" onClick="userStart()">You Start</button> 
+<button id="cpuStartBtn" type="button" onClick="cpuStart()">Computer Starts</button> 
+<button id="restartBtn"  type="button" onClick="restartGame()">Restart</button> 
+</form> 
+
+
+</body>
+</html>
